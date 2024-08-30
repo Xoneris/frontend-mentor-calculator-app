@@ -1,33 +1,96 @@
 <script lang="ts">
 
-  let display:Array<string|number> = []
+  let display:Array<string|number> = [];
+  let showResult:boolean = false;
+  let result:any;
 
   function addToDisplay(character:string|number) {
-    display.push(character);
+
+    showResult = false
+
+    if (typeof character === "string") {
+      
+      if (display.length === 0){
+        return
+      }
+
+      if (typeof display[display.length-1] === "string") {
+        return
+      }
+
+    } else if (typeof character === "number") {
+      
+      if (character === 0 ) {
+        if (typeof display[display.length-1] === "string") {
+          return
+        }
+      }
+    }
+
+      display.push(character);
+      display = [...display];
+
+    
+  }
+
+  function removeLastElement() {
+    display.pop();
     display = [...display];
+  }
+
+  
+  function calculate() {
+    // if last array element is string, cut it
+    if (typeof display[display.length-1] === "string"){
+      display.pop();
+    }
+
+    let temp:any = []
+    let start = 0
+
+    for(let i = 0; i < display.length; i++){
+
+      
+
+      if (typeof display[i] === "string"){
+        temp = [...temp, display.slice(start, i)]
+        temp = [...temp, display.slice(i, i)]
+        start = i
+        // i = i+2
+      }
+
+    }
+
+    showResult = true;
+    result = temp;
   }
 
 </script>
 
-<main class="w-screen h-screen flex justify-center items-center bg-gray-600">
+<main class="w-screen h-screen flex justify-center items-center bg-[#3B4664]">
   
   <div class="flex flex-col gap-4 w-[539px]">
     <header class="flex justify-between">
       <p>Calc</p>
+      <p>{result}</p>
       <div>Theme</div>
     </header>
 
-    <div class="w-ful h-14 p-8 bg-gray-900 text-white text-right rounded-lg">
-      {#each display as char}
-        {char}
-      {/each}
+    <div class="w-ful h-32 p-8 bg-[#181F32] text-6xl text-white rounded-lg font-bold flex justify-end items-center">
+      {#if showResult === true}
+        {result}
+      {:else}
+        {#each display as char}
+          {char}
+        {/each}
+      {/if}
     </div>
 
-    <div class="bg-gray-800 p-8 rounded-lg flex flex-wrap gap-6">
+    <div class="bg-[#252D44] p-8 rounded-lg flex flex-wrap gap-6">
       <button class="button" on:click={() => addToDisplay(7)}>7</button>
       <button class="button" on:click={() => addToDisplay(8)}>8</button>
       <button class="button" on:click={() => addToDisplay(9)}>9</button>
-      <button class="button" >DEL</button>
+      <button class="w-24 h-16 bg-[#647299] hover:bg-[#A2B3E1] rounded-lg text-2xl font-bold shadow-[0_3px_0_0_#414E71] text-white" on:click={() => removeLastElement()}>DEL</button>
       <button class="button" on:click={() => addToDisplay(4)}>4</button>
       <button class="button" on:click={() => addToDisplay(5)}>5</button>
       <button class="button" on:click={() => addToDisplay(6)}>6</button>
@@ -39,7 +102,9 @@
       <button class="button" on:click={() => addToDisplay(".")}>.</button>
       <button class="button" on:click={() => addToDisplay(0)}>0</button>
       <button class="button" on:click={() => addToDisplay("/")}>/</button>
-      <button class="button" on:click={() => addToDisplay("*")}>x</button>
+      <button class="button" on:click={() => addToDisplay("*")}>x</button>  
+      <button class="w-[218px] h-16 bg-[#647299] hover:bg-[#A2B3E1] rounded-lg text-2xl font-bold shadow-[0_3px_0_0_#414E71] text-white" on:click={() => display = []}>RESET</button>
+      <button class="w-[218px] h-16 bg-[#D13F30] hover:bg-[#F96C5B] rounded-lg text-4xl font-bold shadow-[0_3px_0_0_#8F2316] text-white" on:click={() => calculate()}>=</button>
     </div>
   </div>
 
@@ -48,7 +113,16 @@
 <style>
 
   .button {
-    @apply w-24 h-16 bg-yellow-600 rounded-lg;
+    @apply w-24 h-16 bg-[#EAE3DB] rounded-lg text-4xl font-bold;
+    box-shadow: 0px 3px 0px #B6A499;
+  }
+
+  .button:hover {
+    @apply bg-[#FFFFFF];
+  }
+
+  button {
+    /* box-shadow: 0px 3px 0px #B6A499; */
   }
 
 </style>
