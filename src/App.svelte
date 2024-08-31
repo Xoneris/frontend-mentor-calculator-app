@@ -10,10 +10,12 @@
 
     if (typeof character === "string") {
       
+      // First element in the Array cannot be a string (+,-,*,/ or .)
       if (display.length === 0){
         return
       }
 
+      // Cannot input a string if previous array element is also a string (+,-,*,/ or .)
       if (typeof display[display.length-1] === "string") {
         return
       }
@@ -21,9 +23,12 @@
     } else if (typeof character === "number") {
       
       if (character === 0 ) {
-        if (typeof display[display.length-1] === "string") {
+        
+        // Cannot enter a 0 if the two previous array elements are a string (+,-,*,/ or .) followed by a 0.
+        if (typeof display[display.length-2] === "string" && display[display.length-1] === 0){
           return
         }
+
       }
     }
 
