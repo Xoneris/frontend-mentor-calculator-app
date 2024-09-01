@@ -9,33 +9,36 @@
     showResult = false
 
     if (typeof character === "string") {
-      
       // First element in the Array cannot be a string (+,-,*,/ or .)
       if (display.length === 0){
         return
       }
-
       // Cannot input a string if previous array element is also a string (+,-,*,/ or .)
       if (typeof display[display.length-1] === "string") {
         return
       }
-
-    } else if (typeof character === "number") {
-      
-      if (character === 0 ) {
-        
-        // Cannot enter a 0 if the two previous array elements are a string (+,-,*,/ or .) followed by a 0.
-        if (typeof display[display.length-2] === "string" && display[display.length-1] === 0){
+      if (character === ".") {
+        // Cannot input a "." if the last string in the array is also a "."
+        let found:boolean = false;
+        for(let i = display.length; i >= 0; i--){
+          if (typeof display[i] === "string" && display[i] === ".") {
+            found = true;
+            break;
+          }
+        }
+        if(found === true){
           return
         }
-
+      }
+    } else if (typeof character === "number") {
+      // Cannot enter a number if the two previous array elements are a math operator (+,-,*,/) followed by a 0.
+      if (["+","-","*","/"].includes(display[display.length-2] as string) && display[display.length-1] === 0){
+        return
       }
     }
-
+      // Add the element to the Array and reassign so Svelte rerenders.
       display.push(character);
       display = [...display];
-
-    
   }
 
   function removeLastElement() {
@@ -55,13 +58,10 @@
 
     for(let i = 0; i < display.length; i++){
 
-      
-
       if (typeof display[i] === "string"){
-        temp = [...temp, display.slice(start, i)]
-        temp = [...temp, display.slice(i, i)]
+        temp.push(display.slice(start, i-1))
+        temp.push(display.slice(i, i))
         start = i
-        // i = i+2
       }
 
     }
