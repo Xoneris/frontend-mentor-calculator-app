@@ -21,9 +21,11 @@
         // Cannot input a "." if the last string in the array is also a "."
         let found:boolean = false;
         for(let i = display.length; i >= 0; i--){
-          if (typeof display[i] === "string" && display[i] === ".") {
-            found = true;
-            break;
+          if (typeof display[i] === "string") {
+            if (display[i] === ".") {
+              found = true;
+              break;
+            }
           }
         }
         if(found === true){
@@ -53,22 +55,79 @@
       display.pop();
     }
 
-    let temp:any = []
-    let start = 0
+    let temp:Array<string|number> = []
+    let tempNumber:string = ""
+    let anotherTemp:number = 0
 
     for(let i = 0; i < display.length; i++){
 
-      if (typeof display[i] === "string"){
-        temp.push(display.slice(start, i-1))
-        temp.push(display.slice(i, i))
-        start = i
+      if (typeof display[i] === "number" || display[i] === ".") {
+        
+        tempNumber += display[i];
+      } else {
+        
+        if (tempNumber.length > 0) {
+          temp.push(Number(tempNumber))
+          temp.push(display[i])
+          tempNumber = ""
+        }
       }
-
     }
+    if (tempNumber.length > 0) {
+      temp.push(Number(tempNumber))
+    }
+
+    for(let j = 0; j < temp.length; j++) {
+
+      let numberOne = 0
+      let numberTwo = 0
+
+      if(temp[j] === "*" || temp[j] === "/"){
+
+        let tempResult:number = 0
+        numberOne = Number(temp[j-1])
+        numberTwo = Number(temp[j+1])
+
+        if (temp[j] === "*"){
+          tempResult = numberOne * numberTwo
+        }
+        if (temp[j] === "/"){
+          tempResult = numberOne / numberTwo
+        } 
+        temp.splice(j-1,3,tempResult)
+        j -= 1;
+      }
+    }
+
+    for(let j = 0; j < temp.length; j++) {
+
+      let numberOne = 0
+      let numberTwo = 0
+
+      if(temp[j] === "+" || temp[j] === "-"){
+
+        let tempResult:number = 0
+        numberOne = Number(temp[j-1])
+        numberTwo = Number(temp[j+1])
+
+        if (temp[j] === "+"){
+          tempResult = numberOne + numberTwo
+        }
+        if (temp[j] === "-"){
+          tempResult = numberOne - numberTwo
+        } 
+        temp.splice(j-1,3,tempResult)
+        j -= 1;
+      }
+    }
+
+
 
     showResult = true;
     result = temp;
   }
+
+  
 
 </script>
 
