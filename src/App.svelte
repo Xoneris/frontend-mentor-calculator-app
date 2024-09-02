@@ -155,12 +155,7 @@
 <main class="w-screen h-screen flex justify-center items-center bg-[#3B4664]">
   
   <div class="flex flex-col gap-4 w-[539px]">
-    <header class="flex justify-between">
-      <p>Calc</p>
-      <p></p>
-      <div>Theme</div>
-    </header>
-
+    
     <div class="w-full h-32 p-8 bg-[#181F32] text-white rounded-lg font-bold flex justify-end items-center" id="display">
       <p id="displayText">
       {#if showResult === true}
