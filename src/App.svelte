@@ -4,6 +4,8 @@
   let showResult:boolean = false;
   let result:any;
 
+  
+
   function addToDisplay(character:string|number) {
 
     showResult = false
@@ -20,10 +22,12 @@
       if (character === ".") {
         // Cannot input a "." if the last string in the array is also a "."
         let found:boolean = false;
-        for(let i = display.length; i >= 0; i--){
+        for (let i = display.length; i >= 0; i--){
           if (typeof display[i] === "string") {
             if (display[i] === ".") {
               found = true;
+              break;
+            } else {
               break;
             }
           }
@@ -38,9 +42,11 @@
         return
       }
     }
+      checkFontSize()
       // Add the element to the Array and reassign so Svelte rerenders.
       display.push(character);
       display = [...display];
+
   }
 
   function removeLastElement() {
@@ -48,24 +54,20 @@
     display = [...display];
   }
 
-  
   function calculate() {
-    // if last array element is string, cut it
+    
     if (typeof display[display.length-1] === "string"){
       display.pop();
     }
 
     let temp:Array<string|number> = []
     let tempNumber:string = ""
-    let anotherTemp:number = 0
 
     for(let i = 0; i < display.length; i++){
 
       if (typeof display[i] === "number" || display[i] === ".") {
-        
-        tempNumber += display[i];
+        tempNumber += display[i]; 
       } else {
-        
         if (tempNumber.length > 0) {
           temp.push(Number(tempNumber))
           temp.push(display[i])
@@ -121,13 +123,32 @@
       }
     }
 
-
-
     showResult = true;
     result = temp;
+    display = [];
   }
 
-  
+  function reset() {
+    display = [];
+    showResult = false;
+    const displayElement:HTMLElement = document.getElementById('display') as HTMLElement
+    displayElement.style.fontSize = 48 + 'px';
+  }
+
+  function checkFontSize() {
+    const displayElement:HTMLElement = document.getElementById('display') as HTMLElement
+    const displayWidth = displayElement.offsetWidth
+    const displayTextElement:HTMLElement = document.getElementById('displayText') as HTMLAnchorElement
+    const textWidth = displayTextElement.offsetWidth
+
+    let fontSize = parseInt(window.getComputedStyle(displayElement).fontSize);
+
+    if (textWidth+64 > displayWidth) {
+      fontSize -= 3;
+      displayElement.style.fontSize = fontSize + 'px';
+    }
+
+  }
 
 </script>
 
@@ -136,11 +157,12 @@
   <div class="flex flex-col gap-4 w-[539px]">
     <header class="flex justify-between">
       <p>Calc</p>
-      <p>{result}</p>
+      <p></p>
       <div>Theme</div>
     </header>
 
-    <div class="w-ful h-32 p-8 bg-[#181F32] text-6xl text-white rounded-lg font-bold flex justify-end items-center">
+    <div class="w-full h-32 p-8 bg-[#181F32] text-white rounded-lg font-bold flex justify-end items-center" id="display">
+      <p id="displayText">
       {#if showResult === true}
         {result}
       {:else}
@@ -148,9 +170,10 @@
           {char}
         {/each}
       {/if}
+      </p>
     </div>
 
-    <div class="bg-[#252D44] p-8 rounded-lg flex flex-wrap gap-6">
+    <div class="bg-[#252D44] p-8 rounded-lg flex flex-wrap justify-center gap-6">
       <button class="button" on:click={() => addToDisplay(7)}>7</button>
       <button class="button" on:click={() => addToDisplay(8)}>8</button>
       <button class="button" on:click={() => addToDisplay(9)}>9</button>
@@ -167,7 +190,7 @@
       <button class="button" on:click={() => addToDisplay(0)}>0</button>
       <button class="button" on:click={() => addToDisplay("/")}>/</button>
       <button class="button" on:click={() => addToDisplay("*")}>x</button>  
-      <button class="w-[218px] h-16 bg-[#647299] hover:bg-[#A2B3E1] rounded-lg text-2xl font-bold shadow-[0_3px_0_0_#414E71] text-white" on:click={() => display = []}>RESET</button>
+      <button class="w-[218px] h-16 bg-[#647299] hover:bg-[#A2B3E1] rounded-lg text-2xl font-bold shadow-[0_3px_0_0_#414E71] text-white" on:click={() => reset()}>RESET</button>
       <button class="w-[218px] h-16 bg-[#D13F30] hover:bg-[#F96C5B] rounded-lg text-4xl font-bold shadow-[0_3px_0_0_#8F2316] text-white" on:click={() => calculate()}>=</button>
     </div>
   </div>
@@ -185,8 +208,8 @@
     @apply bg-[#FFFFFF];
   }
 
-  button {
-    /* box-shadow: 0px 3px 0px #B6A499; */
+  #display {
+    font-size: 48px;
   }
 
 </style>
